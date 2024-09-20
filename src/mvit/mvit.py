@@ -1,10 +1,12 @@
 from typing import Tuple
 
+import lightning as L
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import lightning as L
+from lightning.pytorch.utilities.types import OptimizerLRScheduler
+from torchmetrics import Accuracy, F1Score
 
 
 def _unsqueeze(
@@ -63,42 +65,95 @@ class MViT_V2(nn.Module):
 
 
 class MViT_V2_Lightning(L.LightningModule):
-    def __init__(self, num_classes: int = 1000):
+    def __init__(self, num_classes: int = 1000, lr: float = 1e-3):
         super().__init__()
+        self.lr = lr
+
         self.model = MViT_V2(num_classes)
+
+        self.loss = nn.CrossEntropyLoss()
+        self.f1 = F1Score(task="multiclass", num_classes=num_classes, average="macro")
+        self.acc = Accuracy(task="multiclass", num_classes=num_classes, average="macro")
 
     def forward(self, x):
         return self.model(x)
 
-    def train_step(
+    def training_step(
         self,
-        batch: Tuple[torch.Tensor, torch.Tensor],
+        batch: tuple[torch.Tensor, torch.Tensor],
         batch_idx: int,
-    ):
-        x, y = batch
+    ) -> torch.Tensor:
+        x, label = batch
         logits = self.model(x)
-        loss = F.cross_entropy(logits, y)
+        loss = self.loss(logits, label)
+
+        label_idx = torch.argmax(label, dim=1)
+
+        acc = self.acc(logits, label_idx)
+        f1 = self.f1(logits, label_idx)
+
+        self.__log__(stage="train", loss=loss, acc=acc, f1=f1)
         return loss
 
-    def validate_step(
+    def validation_step(
         self,
         batch: Tuple[torch.Tensor, torch.Tensor],
         batch_idx: int,
-    ):
-        x, y = batch
+    ) -> torch.Tensor:
+        x, label = batch
         logits = self.model(x)
-        loss = F.cross_entropy(logits, y)
+        loss = self.loss(logits, label)
+
+        label_idx = torch.argmax(label, dim=1)
+
+        acc = self.acc(logits, label_idx)
+        f1 = self.f1(logits, label_idx)
+
+        self.__log__(stage="val", loss=loss, acc=acc, f1=f1)
         return loss
 
     def test_step(
         self,
         batch: Tuple[torch.Tensor, torch.Tensor],
         batch_idx: int,
-    ):
-        x, y = batch
+    ) -> torch.Tensor:
+        x, label = batch
         logits = self.model(x)
-        loss = F.cross_entropy(logits, y)
+        loss = self.loss(logits, label)
+
+        label_idx = torch.argmax(label, dim=1)
+
+        acc = self.acc(logits, label_idx)
+        f1 = self.f1(logits, label_idx)
+
+        self.__log__(stage="test", loss=loss, acc=acc, f1=f1)
         return loss
+
+    def configure_optimizers(
+        self,
+    ) -> OptimizerLRScheduler:
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        scheduler = torch.optim.lr_scheduler.CyclicLR(
+            optimizer,
+            base_lr=1e-5,
+            max_lr=1e-3,
+            gamma=0.85,
+            mode="exp_range",
+        )
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+            },
+        }
+
+    def __log__(self, stage: str, **kwargs: dict[str, torch.Tensor]) -> None:
+        self.log_dict(
+            {f"{stage}_{k}": v for k, v in kwargs.items()},
+            on_epoch=True,
+            prog_bar=True,
+            sync_dist=True,
+        )
 
 
 if __name__ == "__main__":
