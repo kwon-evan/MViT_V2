@@ -57,13 +57,13 @@ class FireDataset(Dataset):
     def __getitem__(self, idx: int) -> tuple[Tensor, Tensor]:
         clip: npt.NDArray[np.object_] = self.clips[idx]
 
-        x = torch.stack([self.path2tensor(p) for p in clip])  # (len_clip, 3, 312, 312)
-        x = x.permute(1, 0, 2, 3)  # (3, len_clip, 312, 312)
+        x = torch.stack([self.path2tensor(p) for p in clip])  # (len_clip, 3, 224, 224)
+        x = x.permute(1, 0, 2, 3)  # (3, len_clip, 224, 224)
 
         label = torch.zeros(3, dtype=torch.float)  # (3,)
         label[self.labels[idx]] = 1.0
 
-        return x, label  # (3, len_clip, 312, 312), (3,)
+        return x, label  # (3, len_clip, 224, 224), (3,)
 
     def get_clips(self) -> npt.NDArray[np.object_]:
         ret = []
@@ -116,7 +116,7 @@ class FireDataset(Dataset):
         except Exception as e:
             print(f"Error processing image {path}: {str(e)}")
             # Return a blank image tensor as a fallback
-            return torch.zeros((3, 312, 312), dtype=torch.float32)
+            return torch.zeros((3, 224, 224), dtype=torch.float32)
 
     def imgs2clips(
         self,
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     URL = "./data/"
     dataset = FireDataset(
         roots=URL, stage="Training", len_clip=16
-    )  # [3, len_clip, 312, 312]
+    )  # [3, len_clip, 224, 224]
     print("Dataset length:", len(dataset))
 
     datamodule = FireDataModule(root=URL, batch_size=2)
