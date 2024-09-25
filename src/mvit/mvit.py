@@ -60,6 +60,7 @@ class MViT_V2(nn.Module):
         # classifier "token" as used by standard language architectures
         x = x[:, 0]
         x = self.head(x)
+        x = F.softmax(x, dim=1)
 
         return x
 

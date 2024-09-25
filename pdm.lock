@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:682757494511036889e72c761c17e5de9fbe3d67a04f9ed353ebf7bb9a645677"
+content_hash = "sha256:9bb7b723468b6d0bdd81764808bd47f5ee5828ef9498c09fec89a2952bba0e43"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -74,7 +74,7 @@ files = [
 
 [[package]]
 name = "albucore"
-version = "0.0.16"
+version = "0.0.17"
 requires_python = ">=3.8"
 summary = "A high-performance image processing library designed to optimize and extend the Albumentations library with specialized functions for advanced image transformations. Perfect for developers working in computer vision who require efficient and scalable image augmentation."
 groups = ["default"]
@@ -85,20 +85,20 @@ dependencies = [
     "typing-extensions>=4.9.0; python_version < \"3.10\"",
 ]
 files = [
-    {file = "albucore-0.0.16-py3-none-any.whl", hash = "sha256:247cfcb84ff4ff67ebf8992703f859f478fd874062ea3f7c858908af37c78e22"},
-    {file = "albucore-0.0.16.tar.gz", hash = "sha256:8146982b428edc2f0affbffe36209143355410cdd05b9ed33d4b708b496574c6"},
+    {file = "albucore-0.0.17-py3-none-any.whl", hash = "sha256:751a6d219a0b5217b44168d5fae90c27eadfa5bc381cbb7cc74536e90aeeac5b"},
+    {file = "albucore-0.0.17.tar.gz", hash = "sha256:e9956ac4debc47e804f0677ff4e23939ba322986eac16e801f8ea1c98269db65"},
 ]
 
 [[package]]
 name = "albumentations"
-version = "1.4.15"
+version = "1.4.16"
 requires_python = ">=3.8"
 summary = "An efficient library for image augmentation, providing extensive transformations to support machine learning and computer vision tasks."
 groups = ["default"]
 marker = "python_version == \"3.12\""
 dependencies = [
     "PyYAML",
-    "albucore>=0.0.15",
+    "albucore==0.0.17",
     "eval-type-backport",
     "numpy>=1.24.4",
     "opencv-python-headless>=4.9.0.80",
@@ -108,8 +108,8 @@ dependencies = [
     "typing-extensions>=4.9.0; python_version < \"3.10\"",
 ]
 files = [
-    {file = "albumentations-1.4.15-py3-none-any.whl", hash = "sha256:dc941a2eb5a08361efa4eca55074a432d4986546fb6036731cd8763cf67d87bf"},
-    {file = "albumentations-1.4.15.tar.gz", hash = "sha256:0e86c2e522f12c7f413d765d6095523b9e65a7bfe3d08fb9599d98a989093a48"},
+    {file = "albumentations-1.4.16-py3-none-any.whl", hash = "sha256:a8e90f8d1500e82abf46dfa10f67a8662b335fbc90fccfaeb16a7d30c764b8db"},
+    {file = "albumentations-1.4.16.tar.gz", hash = "sha256:d1b959ef0a20552226b7787529a29aab239ba71ef5024974082b1cd01bf424de"},
 ]
 
 [[package]]

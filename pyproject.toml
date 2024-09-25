@@ -10,9 +10,10 @@ dependencies = [
     "torchvision>=0.19.1",
     "lightning>=2.4.0",
     "av>=13.0.0",
-    "albumentations>=1.4.15",
+    "albumentations>=1.4.16",
     "wandb>=0.18.1",
     "rich>=13.8.1",
+    "opencv-python-headless>=4.10.0.84",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
