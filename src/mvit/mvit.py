@@ -32,6 +32,9 @@ class MViT_V2(nn.Module):
         self.pos_encoding = pretrained.pos_encoding
         self.blocks = pretrained.blocks
         self.norm = pretrained.norm
+        # freeze the pretrained model
+        for param in pretrained.parameters():
+            param.requires_grad = False
         # initialize head with new weights
         self.head = nn.Sequential(
             nn.Dropout(0.5, inplace=True),
